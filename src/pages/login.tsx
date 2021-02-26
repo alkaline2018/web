@@ -12,22 +12,27 @@ import Register from './register';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlCLient';
 import NextLink from "next/link"
+import { withApollo } from '../utils/withApollo';
 
 
 const Login: React.FC<{}> = ({ }) => {
     const router = useRouter();
-    const [, login] = useLoginMutation()
+    const [login] = useLoginMutation()
     return (
         <Wrapper variant="small">
             <Formik initialValues={{ usernameOrEmail: "", password: "" }}
                 onSubmit={async (values, { setErrors }) => {
-                    const response = await login(values);
+                    const response = await login({ variables: values });
                     console.log({ response })
                     if (response.data?.login.errors) {
                         setErrors(toErrorMap(response.data.login.errors))
                     } else if (response.data?.login.user) {
-                        // worked
-                        router.push('/');
+                        if (typeof router.query.next === 'string') {
+                            router.push(router.query.next);
+                        } else {
+                            // worked
+                            router.push('/');
+                        }
                     }
                 }}
             >
@@ -61,4 +66,4 @@ const Login: React.FC<{}> = ({ }) => {
     );
 }
 
-export default withUrqlClient(createUrqlClient)(Login);
+export default withApollo({ srr: false })(Login);

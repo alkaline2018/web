@@ -1,0 +1,3 @@
+mutation SetCookieImageList($imageList: [String!]!) {
+  setCookieImageList(imageList: $imageList)
+}

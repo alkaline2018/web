@@ -1,0 +1,36 @@
+@font-face {
+  font-family: "Carter One";
+  src: url("../static/fonts/CarterOne-Regular.ttf");
+}
+
+/* html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif,
+    Carter One;
+  line-height: 1.6;
+  font-size: 18px;
+} */
+
+* {
+  box-sizing: border-box;
+  font-family: Carter One;
+}
+
+a {
+  color: red;
+  text-decoration: none;
+}
+
+a:hover {
+  /* text-decoration: underline; */
+  text-decoration: none;
+  color: blue;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}

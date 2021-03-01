@@ -89,6 +89,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
       resolvers: {
         Query: {
           posts: cursorPagination(),
+          // getCookieImageList: ,
         }
       },
       updates: {

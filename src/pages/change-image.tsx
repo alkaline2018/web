@@ -4,61 +4,59 @@ import Image from 'next/image'
 import { withApollo } from '../utils/withApollo';
 import { Layout } from '../components/Layout';
 import { useGetCookieImageListQuery } from '../generated/graphql';
-import { Box } from '@chakra-ui/react';
+import { Box, Button, Flex, Link } from '@chakra-ui/react';
+import { App } from '../../static/js/image-text/app';
+import { CONTENT_URL_HOST } from '../constants';
+import { InputField } from '../components/InputField';
+import { Formik, Form } from 'formik';
+import { toErrorMap } from '../utils/toErrorMap';
+import login from './login';
+import { UseGetCookieImageListQueryComponent } from '../components/image-components/UseGetCookieImageListQueryComponent';
+import { DownloadImage } from '../components/image-components/downloadImage';
+import { downloadURI } from '../utils/downloadURI';
 
 interface registerProps { }
 
-const myLoader = ({ src, width, quality }) => {
-    return `http://image.s-wingsuit.com:3003/${src}?w=${width}&q=${quality || 75}`
-}
-
-
 const ChangeImage: React.FC<registerProps> = ({ }) => {
+
     const router = useRouter();
-    const [files, setFiles] = useState([])
-    const { data, error, loading } = useGetCookieImageListQuery();
-    console.log("data:", data?.getCookieImageList)
 
-    if (loading) {
-        return (
-            <Layout>
-                <div>loading...</div>
-            </Layout>
-        )
-    }
-    if (error) {
-        console.error(error);
-    }
-
-    if (!data) {
-        return (
-            <Layout>
-                <Box>could not image</Box>
-            </Layout>
-        )
-    }
-
-    const imageSet = new Set(data?.getCookieImageList)
-    // console.log("imageSet:", imageSet)
-    const uniqueArr = Array.from(imageSet)
-    // console.log("uniqueArr:", uniqueArr)
+    let app: App;
 
     return (
         <Layout>
-            {uniqueArr.map((image) => !image ? null :
-                (
-                    <img
-                        // loader={myLoader}
-                        src={'http://image.s-wingsuit.com:3003/' + image}
-                        alt="Picture of the author"
-                        width={100}
-                        height={100}
-                    />
-                )
-            )
-            }
+            <Formik initialValues={{ text: "" }}
+                onSubmit={async (values, { setErrors }) => {
+                    if (app) {
+
+                        app.setText(values.text)
+                    } else {
+                        app = new App(values.text);
+                    }
+                    app.resize();
+                }}
+            >
+                {({ isSubmitting }) => (
+                    <Form>
+                        <InputField
+                            name="text"
+                            placeholder="글자를 입력 후 change-text를 클릭해주세요"
+                        // label="text"
+                        />
+                        <Box mt={4}>
+                            <Button mr={2} isLoading={isSubmitting} type="submit" colorScheme="blue">change-text</Button>
+                            <DownloadImage />
+                            <UseGetCookieImageListQueryComponent />
+                        </Box>
+                    </Form>
+
+                )}
+            </Formik>
+
+
         </Layout>
+
     );
 }
 
-export default withApollo({ ssr: false })(ChangeImage);
+export default withApollo({ ssrMode: false })(ChangeImage);

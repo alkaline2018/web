@@ -1,10 +1,47 @@
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import { Flex, IconButton, Box, Heading } from '@chakra-ui/react'
-import { PostSnippetFragment, PostsQuery, useVoteMutation } from '../generated/graphql'
+import { Post, PostSnippetFragment, PostsQuery, useVoteMutation, VoteMutation } from '../generated/graphql'
 import React, { useState } from 'react'
+import { gql } from '@urql/core';
+import { ApolloCache } from '@apollo/client';
 
 interface UpdootSectionProps {
     post: PostSnippetFragment;
+}
+
+const updateAfterVote = (value: number, postId: number, cache: ApolloCache<VoteMutation>) => {
+
+    const data = cache.readFragment<{
+        id: number;
+        points: number;
+        voteStatus: number | null;
+    }>({
+        id: "Post:" + postId,
+        fragment: gql`
+                fragment _ on Post {
+                    id
+                    points
+                    voteStatus
+                }
+            `,
+    });
+
+    if (data) {
+        if (data.voteStatus === value) {
+            return;
+        }
+        const newPoints = (data.points as number) + (!data.voteStatus ? 1 : 2) * value;
+        cache.writeFragment({
+            id: "Post:" + postId,
+            fragment: gql`
+                fragment __ on Post {
+                  points
+                  voteStatus
+                }
+              `,
+            data: { points: newPoints, voteStatus: value },
+        });
+    }
 }
 
 export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
@@ -29,7 +66,8 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
                         variables: {
                             postId: post.id,
                             value: 1,
-                        }
+                        },
+                        update: (cache) => updateAfterVote(1, post.id, cache)
                     })
                     setLoadingState('not-loading')
                 }}
@@ -49,7 +87,9 @@ export const UpdootSection: React.FC<UpdootSectionProps> = ({ post }) => {
                         variables: {
                             postId: post.id,
                             value: -1,
-                        }
+                        },
+                        update: (cache) => updateAfterVote(-1, post.id, cache)
+
                     })
                     setLoadingState('not-loading')
                 }}

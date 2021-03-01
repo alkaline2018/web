@@ -21,6 +21,10 @@ body {
   overflow: hidden;
 } */
 
-/* a {
+a:hover {
   text-decoration: none;
-} */
+}
+
+.link:hover {
+  text-decoration: none;
+}

@@ -3,25 +3,26 @@
   src: url("../static/fonts/CarterOne-Regular.ttf");
 }
 
-/* html,
+html,
 body {
   padding: 0;
   margin: 0;
+  height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif,
     Carter One;
   line-height: 1.6;
   font-size: 18px;
-} */
+}
 
 * {
   box-sizing: border-box;
   font-family: Carter One;
+  text-decoration: none;
 }
 
-a {
+h2 a {
   color: red;
-  text-decoration: none;
 }
 
 a:hover {
@@ -30,7 +31,33 @@ a:hover {
   color: blue;
 }
 
-img {
+img.upload-image {
   max-width: 100%;
   display: block;
+}
+
+ul.upload-image {
+  position: absolute;
+  left: 50%;
+  bottom: 5;
+  transform: translate(-50%, 0);
+  display: flex;
+}
+
+ul.upload-image li {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  margin: 0 10px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+ul.upload-image li.selected {
+  border: 4px solid #007cf7;
+}
+
+ul.upload-image li img {
+  width: 100%;
+  height: 100%;
 }

@@ -3,7 +3,7 @@ import { useField } from 'formik';
 import React, { InputHTMLAttributes, TextareaHTMLAttributes, HTMLAttributes } from 'react';
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
-    label: string;
+    label?: string;
     name: string;
     textarea?: boolean;
 }

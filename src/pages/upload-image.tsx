@@ -5,7 +5,7 @@ import { valueScaleCorrection } from 'framer-motion/types/render/dom/layout/scal
 import { Wrapper } from '../components/Wrapper';
 import { InputField } from '../components/InputField';
 import { useMutation } from 'urql';
-import { useRegisterMutation, useSetCookieImageListMutation } from '../generated/graphql';
+import { GetCookieImageListDocument, GetCookieImageListQuery, useRegisterMutation, useSetCookieImageListMutation } from '../generated/graphql';
 import { toErrorMap } from '../utils/toErrorMap';
 import { useRouter } from "next/router"
 import { withUrqlClient } from 'next-urql';
@@ -47,7 +47,18 @@ const UploadImage: React.FC<registerProps> = ({ }) => {
                 onSubmit={async (values, { setErrors }) => {
                     console.log("fileNames2", fileNames)
 
-                    const setResult = await setCookieImageList({ variables: { imageList: fileNames } })
+                    const setResult = await setCookieImageList({
+                        variables: { imageList: fileNames },
+                        update: (cache, { data }) => {
+                            cache.writeQuery<GetCookieImageListQuery>({
+                                query: GetCookieImageListDocument,
+                                data: {
+                                    __typename: "Query",
+                                    getCookieImageList: fileNames
+                                }
+                            })
+                        }
+                    })
                     console.log("setResult: ", setResult)
                     router.push({
                         pathname: '/change-image',

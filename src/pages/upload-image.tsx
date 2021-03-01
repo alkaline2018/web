@@ -87,7 +87,7 @@ const UploadImage: React.FC<registerProps> = ({ }) => {
                                 //     setFiles
                                 // }
                                 // }
-                                onupdatefiles={setFiles}
+                                onupdatefiles={() => setFiles}
                                 className="filepond-root"
                                 ref={ref => pond = ref}
                                 allowMultiple={true}
